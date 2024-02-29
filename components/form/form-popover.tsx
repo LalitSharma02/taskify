@@ -14,12 +14,11 @@ import {
 import { useAction } from "@/hooks/use-action";
 import { Button } from "@/components/ui/button";
 import { createBoard } from "@/actions/create-board";
-// import { useProModal } from "@/hooks/use-pro-modal";
+import { useProModal } from "@/hooks/use-pro-modal";
 
 import { FormInput } from "./form-input";
 import { FormSubmit } from "./form-submit";
 import { FormPicker } from "./form-picker";
-// import { FormPicker } from "./form-picker";
 
 interface FormPopoverProps {
   children: React.ReactNode;
@@ -34,30 +33,29 @@ export const FormPopover = ({
   align,
   sideOffset = 0,
 }: FormPopoverProps) => {
+  const proModal = useProModal();
+  const router = useRouter();
+  const closeRef = useRef<ElementRef<"button">>(null);
 
-    const router = useRouter();
-    const closeRef = useRef<ElementRef<"button">>(null);
-
-    const { execute , fieldErrors } = useAction(createBoard , {
-      onSuccess: (data) => {
-        
-        toast.success("Board created!");
-        closeRef.current?.click();
-        router.push(`/board/${data.id}`);
-      } ,
-      onError: (error) => {
-        console.log({ error });
-        toast.error(error);
-      }
-    });
-
-    const onSubmit = (formData: FormData) => {
-      const title = formData.get("title") as string;
-      const image = formData.get("image") as string;
+  const { execute, fieldErrors } = useAction(createBoard, {
+    onSuccess: (data) => {
+      toast.success("Board created!");
+      closeRef.current?.click();
+      router.push(`/board/${data.id}`);
+    },
+    onError: (error) => {
       
-  
-      execute({ title, image});
-    }
+      toast.error(error);
+      proModal.onOpen();
+    },
+  });
+
+  const onSubmit = (formData: FormData) => {
+    const title = formData.get("title") as string;
+    const image = formData.get("image") as string;
+
+    execute({ title, image });
+  };
 
   return (
     <Popover>
@@ -81,20 +79,15 @@ export const FormPopover = ({
         </PopoverClose>
         <form action={onSubmit} className="space-y-4">
           <div className="space-y-4">
-            <FormPicker 
-            id="image"
-            errors={fieldErrors}
-            />
-            <FormInput 
-            id="title"
-            label="Board title"
-            type="text"
-            errors={fieldErrors}
+            <FormPicker id="image" errors={fieldErrors} />
+            <FormInput
+              id="title"
+              label="Board title"
+              type="text"
+              errors={fieldErrors}
             />
           </div>
-          <FormSubmit className="w-full">
-            Create
-          </FormSubmit>
+          <FormSubmit className="w-full">Create</FormSubmit>
         </form>
       </PopoverContent>
     </Popover>
