@@ -10,19 +10,20 @@ import { updateList } from "@/actions/update-list";
 import { FormInput } from "@/components/form/form-input";
 import { ListOptions } from "./list-options";
 
-// import { ListOptions } from "./list-options";
+
 
 
 
 
 interface ListHeaderProps {
     data: List;
-    // onAddCard: () => void;
+    onAddCard: () => void;
   };
   
 
 export const ListHeader = ({
     data,
+    onAddCard,
 }: ListHeaderProps) => {
 
   const [title, setTitle] = useState(data.title);
@@ -109,8 +110,8 @@ export const ListHeader = ({
             </div>
             )}
             <ListOptions
-                // onAddCard={onAddCard}
-                // data={data}
+                 onAddCard={onAddCard}
+                data={data}
       />
         </div>
     )
